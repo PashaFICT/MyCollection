@@ -10,6 +10,11 @@ namespace MyCollection
     {
         static void Main(string[] args)
         {
+            MyColl<int> myColl = new MyColl<int>();
+            foreach (int p in myColl)
+            {
+
+            }
         }
     }
 }
