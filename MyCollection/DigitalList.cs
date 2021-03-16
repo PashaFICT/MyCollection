@@ -7,14 +7,15 @@ using System.Threading.Tasks;
 
 namespace MyCollection
 {
-    public class MyColl<T> : IEnumerable where T : IComparable
+    public class DigitalLIst<T> : IEnumerable<T> where T : IComparable
     {
         private T[] _arr;
         private T _maxValue;
         private int _length;
         private int _currentValue;
-        public MyColl()
+        public DigitalLIst()
         {
+            Validation();
             _currentValue = 0;
             _length = 16;
             _arr = new T[_length];
@@ -45,8 +46,8 @@ namespace MyCollection
 
         public void Add( T element)
         {
-            //if (element > _maxValue)
-            //    _maxValue = element;
+            if (element.CompareTo(_maxValue) == 1)
+                _maxValue = element;
             if (_currentValue >= _length)
             {
                 Expansion();
@@ -58,6 +59,8 @@ namespace MyCollection
         // Вставка по индексу О(n)
         public void AddByIndex(int index, T element)
         {
+            if (element.CompareTo(_maxValue) == 1)
+                _maxValue = element;
             if (index >= _length)
             {
                Expansion(index);
@@ -71,17 +74,25 @@ namespace MyCollection
 
         public void Remove(T element)
         {
-           // _arr = _arr.Where(val => val != element).ToArray();
-            //foreach (T t in _arr)
-            //{
-            //    if (t != element)
-            //}
+            _arr = _arr.Where((val, idx) => val.CompareTo(element) != 0).ToArray();
+
         }
         // Удаление по индексу О(n)
         public void RemoveByIndex(int index)
         {
-            
-            
+            T[] newArr = new T[_arr.Length - 1];
+            for (int i = 0; i < _arr.Length; i++)
+            {
+                if (i < index)
+                {
+                    newArr[i] = _arr[i];
+                }
+                else if (i > index)
+                {
+                    newArr[i - 1] = _arr[i];
+                }
+            }
+            _arr = newArr;
         }
 
 
@@ -98,31 +109,26 @@ namespace MyCollection
         }
 
         // Проверка на число
-        private bool Validation(T element)
+        private bool Validation()
         {
-            if (element is byte || element is int || element is long || element is double || element is float || element is decimal)
+            if (_maxValue is byte || _maxValue is int || _maxValue is long || _maxValue is double || _maxValue is float || _maxValue is decimal)
             {
                 return true;
             }
             else
             {
                 throw new Exception();
-                //return false;
             }
         }
-
-        //public int CompareTo(object o1, object o2)
-        //{
-        //    if (o1 != o2)
-        //        return 1;
-        //    else
-        //        return 0;
-        //}
 
         public IEnumerator GetEnumerator()
         {
             return _arr.GetEnumerator();
         }
 
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return ((IEnumerable<T>)_arr).GetEnumerator();
+        }
     }
 }
